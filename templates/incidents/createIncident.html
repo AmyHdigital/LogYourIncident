@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %} | Create a new incident {% endblock %}
+
+{% block content %}
+<section id="createIncident" class="bg-light py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 mx-auto">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h4>Create an Incident</h4>
+            </div>
+            <div class="card-body">
+              <!-- Alerts -->
+              {% include 'partials/_alerts.html' %}
+              <form action="{% url 'createIncident' %}" method="POST">
+                {{  form.as_p }}
+                  {% csrf_token %}
+                 
+                <input type="submit" value="Save" class="btn btn-secondary btn-block">
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+
+
+  
+  {% endblock %}

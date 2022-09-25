@@ -68,7 +68,7 @@ html.lb-disable-scrolling {
   width: 32px;
   height: 32px;
   margin: 0 auto;
-  background: url(../images/loading.gif) no-repeat;
+  background: url() no-repeat;
 }
 .lb-nav {
   top: 0;
@@ -81,7 +81,7 @@ html.lb-disable-scrolling {
 }
 .lb-nav a {
   outline: 0;
-  background-image: url(data:image/gif;base64,R0lGODlhAQABAPAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==);
+  background-image: url();
 }
 .lb-next,
 .lb-prev {

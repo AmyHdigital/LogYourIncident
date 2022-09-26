@@ -3,30 +3,16 @@
 {% block title %} | Incident {% endblock %}
 
 {% block content %}
-    <section id="showcase-inner" class="py-5 text-white">
-        <div class="container">
-            <div class="row text-center">
-                <div class="col-md-12">
-                    <h1 class="display-4"> Incident Number {{incident.id }}</h1>
-                </div>
-            </div>
+  <section id="showcase-inner" class="py-5 text-white">
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-md-12">
+          <h1 class="display-4"> Incident Number {{ incident.id }}</h1>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-<<<<<<< HEAD
-    <!-- Breadcrumb -->
-    <section id="bc" class="mt-3">
-        <div class="container">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item">
-                        <a href="/incidents/">
-                            <i class="fas fa-home"></i> All Incidents</a>
-                    </li>
-                    <li class="breadcrumb-item active"> {{incident.id}}</li>
-                </ol>
-            </nav>
-=======
   <!-- Breadcrumb -->
   <section id="bc" class="mt-3">
     <div class="container">
@@ -81,158 +67,111 @@
               <span class="float-right">{{ incident.reportedBy }} </span>
             </li>
           </ul>
->>>>>>> a09fc8d (amend accounts html screen)
         </div>
-    </section>
-    
 
-    <section id="incident" class="py-4">
-        <div class="container">
-            <div class="row mb-5 fields">
-                <div class="col-md-6">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item text-secondary">
-                            <i class=""></i> Title of Incident
-                            <span class="float-right">{{ incident.title }}</span>
-                        </li>
-                        <li class="list-group-item text-secondary">
-                            <i class=""></i> Description of Incident:
-                            <span class="float-right">{{ incident.description }}</span>
-                        </li>
-                        <li class="list-group-item text-secondary">
-                            <i class=""></i> Date Incident Created:
-                            <span class="float-right">{{ incident.createdOn }}</span>
-                        </li>
-                        <li class="list-group-item text-secondary">
-                            <i class=""></i> Priority of Incident:
-                            <span class="float-right">{{ incident.get_priority_display}}</span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-md-6">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item text-secondary">
-                            <i class=""></i> Status of Incident:
-                            <span class="float-right">{{ incident.get_status_display  }}</span>
-                        </li>
-                        <li class="list-group-item text-secondary">
-                            <i class=""></i> System affected:
-                            <span class="float-right">{{ incident.system }}</span>
-                        </li>
-                        <li class="list-group-item text-secondary">
-                            <i class=""></i> Incident Owned By:
-                            <span class="float-right">{{ incident.ownedBy}}</span>
-                        </li>
-                        <li class="list-group-item text-secondary">
-                            <i class=""></i> Incident Raised by:
-                            <span class="float-right">{{ incident.reportedBy }} </span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="col-md-12">
-                    <ul class="list-group ">
-                        <li class="list-group-item text-secondary">
-                            <i class></i> Description of Incident:
-                            <span class="f">{{ incident.description  }}</span>
-                        </li>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+        <div class="col-md-12">
+          <ul class="list-group ">
+            <li class="list-group-item text-secondary">
+              <i class></i> Description of Incident:
+              <span class="f">{{ incident.description }}</span>
+            </li>
+          </ul>
         </div>
-     </section>
-    
-     <section>
-        <div class="container">
-            <!-- show assign button if
-                (a) incident is not owned by anyone AND
-                (b) incident wasn't raised by the current user AND
-                (c) status is RAISED
-            -->
-            {% if incident.ownedBy == None and incident.reportedBy != user and incident.status == 'RA' %}
-                <input type="button" name="assign" value="Assign To Me" class="btn btn-secondary btn-block" onclick="location.href='updateincident/?button=assign'">
+      </div>
+    </div>
+  </section>
 
-                <!-- show unassign button if
-                (a) incident is  owned by someone AND
-                (b) current user is admin
-                (c) incident status is in-progress
-            -->
-            {% elif incident.ownedBy != null and user.is_staff == True and incident.status == 'IP' %}
-                <input type="button" name="unassign" value="Unassign" class="btn btn-secondary btn-block" onclick="location.href='updateincident/?button=unassign'">
-            {% endif %}
+  <section>
+    <div class="container">
+      <!-- show assign button if
+          (a) incident is not owned by anyone AND
+          (b) incident wasn't raised by the current user AND
+          (c) status is RAISED
+      -->
+      {% if incident.ownedBy == None and incident.reportedBy != user and incident.status == 'RA' %}
+        <input type="button" name="assign" value="Assign To Me" class="btn btn-secondary btn-block"
+               onclick="location.href='updateincident/?button=assign'">
 
-            <!-- show close button if
-                (a) user is Admin AND
-                (b) status is resolved
-            -->
-            {% if user.is_staff == True and incident.status == 'RE' %}
-                <input type="button" name="close" value="Close" class="btn btn-secondary btn-block" onclick="location.href='updateincident/?button=close'">
-            {% endif %}
+        <!-- show unassign button if
+        (a) incident is  owned by someone AND
+        (b) current user is admin
+        (c) incident status is in-progress
+    -->
+      {% elif incident.ownedBy != null and user.is_staff == True and incident.status == 'IP' %}
+        <input type="button" name="unassign" value="Unassign" class="btn btn-secondary btn-block"
+               onclick="location.href='updateincident/?button=unassign'">
+      {% endif %}
 
-                <!-- show resolvebutton if
-                (a) status is not resolved AND 
-                    (1) incident is reported by current user OR
-                    (2) user is Admin OR
-                    (3) incident is owned by current user
-            -->
-            {% if incident.status != 'RE' %}
-                {% if incident.reportedBy == user or user.is_staff == True or incident.ownedBy == user %}
-                <input type="button" name="resolve" value="Resolve" class="btn btn-secondary btn-block" onclick="location.href='updateincident/?button=resolve'"/>
-                {% endif %}
-            {% endif %}
+      <!-- show close button if
+          (a) user is Admin AND
+          (b) status is resolved
+      -->
+      {% if user.is_staff == True and incident.status == 'RE' %}
+        <input type="button" name="close" value="Close" class="btn btn-secondary btn-block"
+               onclick="location.href='updateincident/?button=close'">
+      {% endif %}
 
-             <!-- show delete button if
-                (a) user is Admin
-            -->
+      <!-- show resolvebutton if
+      (a) status is not resolved AND
+          (1) incident is reported by current user OR
+          (2) user is Admin OR
+          (3) incident is owned by current user
+  -->
+      {% if incident.status != 'RE' %}
+        {% if incident.reportedBy == user or user.is_staff == True or incident.ownedBy == user %}
+          <input type="button" name="resolve" value="Resolve" class="btn btn-secondary btn-block"
+                 onclick="location.href='updateincident/?button=resolve'"/>
+        {% endif %}
+      {% endif %}
 
-            {% if user.is_staff == True %}
-            <input type="button" name="delete" value="Delete" class="btn btn-secondary btn-block" onclick="location.href='updateincident/?button=delete'"/>
-            {% endif %}
+      <!-- show delete button if
+         (a) user is Admin
+     -->
 
-            
-            
-                    <div class="form-group">
-                                <table class="table" method="GET">
-                                    <thead>
-                                        {% include 'partials/_alerts.html' %}
-                                        {% csrf_token %}
-                                        {% if incident_comments %}
-                                            <tr>
-                                                <th>Comment</th>
-                                                <th>Time</th>
-                                                <th>User</th>
-                                            </tr>
-                                            {% for comment in incident_comments %}
-                                                <tr>
-                                                    <td>
-                                                        {{ comment.comment }}
-                                                    </td>
-                                                    <td>
-                                                        {{ comment.commentTime }}
-                                                    </td>
-                                                    <td>
-                                                        {{ comment.user }}
-                                                    </td>
-                                                </tr>
-                                            {% endfor %}
-                                    </thead>
-                                </table>
-                                {% else %}
-                                    <div class="col-md-12">
-                                        <p>No Comments Available</p>
-                                    </div>
-                                {% endif %}  
-                    <form action="updateincident/?button=addcomment">
-                      <label for="message" class="col-form-label">Message:</label>
-                      <textarea name="comment" class="form-control"></textarea>
-                      <p></p>
-                           
-                     <input type="submit" name="addcomment" value="Add Comment" class="btn btn-secondary btn-block" />
-        
-                  </form>
-                  <p></p>
-        </div>
-    </section>
+      {% if user.is_staff == True %}
+        <input type="button" name="delete" value="Delete" class="btn btn-secondary btn-block"
+               onclick="location.href='updateincident/?button=delete'"/>
+      {% endif %}
+
+      <div class="form-group">
+        {% include 'partials/_alerts.html' %}
+        {% csrf_token %}
+        {% if incident_comments %}
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Comment</th>
+                <th>Time</th>
+                <th>User</th>
+              </tr>
+              {% for comment in incident_comments %}
+                <tr>
+                  <td>
+                    {{ comment.comment }}
+                  </td>
+                  <td>
+                    {{ comment.commentTime }}
+                  </td>
+                  <td>
+                    {{ comment.user }}
+                  </td>
+                </tr>
+              {% endfor %}
+            </thead>
+          </table>
+        {% else %}
+          <div class="col-md-12">
+            <p>No Comments Available</p>
+          </div>
+        {% endif %}
+        <form action="updateincident/?button=addcomment">
+          <label for="message" class="col-form-label">Message</label>
+          <textarea name="comment" class="form-control"></textarea>
+          <p></p>
+          <input type="submit" name="addcomment" value="Add Comment" class="btn btn-secondary btn-block"/>
+        </form>
+        <p></p>
+      </div>
+    </div>
+  </section>
 {% endblock %}
-

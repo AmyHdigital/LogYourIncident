@@ -17,7 +17,7 @@ from django.utils import timezone
 # Create your views here.
 
 @login_required
-def index(request):
+def incidents(request):
     queryset_list = Incident.objects.all()
 
     if 'raisedBy' in request.GET:

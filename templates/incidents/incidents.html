@@ -3,45 +3,41 @@
 {% block title %} | Browse All Incidents{% endblock %}
 
 {% block content %}
-<section id="showcase-inner" class="py-5 text-white">
-  <div class="container">
-    <div class="row text-center">
-      <div class="col-md-12">
-        <h1 class="display-4">Incidents Page</h1>
+  <section id="showcase-inner" class="py-5 text-white">
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-md-12">
+          <h1 class="display-4">Incidents Page</h1>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- Breadcrumb -->
-<section id="bc" class="mt-3">
-  <div class="container">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-          <a href="{% url 'index' %}">
-            <i class="fas fa-home"></i> Home</a>
-        </li>
-        <li class="breadcrumb-item active"> Browse Incidents</li>
-      </ol>
-    </nav>
-  </div>
-</section>
+  <!-- Breadcrumb -->
+  <section id="bc" class="mt-3">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="{% url 'incidents' %}">
+              <i class="fas fa-home"></i> Home</a>
+          </li>
+          <li class="breadcrumb-item active"> Browse Incidents</li>
+        </ol>
+      </nav>
+    </div>
+  </section>
 
-
-<section id="">
+  <section id="">
     <div class="container text-center">
       <div class="incident-search ">
         <div class="overlay p-5">
-          <h1 class="display-4 mb-4">
-            Search Incidents 
-          </h1>
-        
+          <h1 class="display-4 mb-4">Search Incidents</h1>
+
           <div class="search">
-            <form action="{% url 'index' %}">
+            <form action="{% url 'incidents' %}">
               <!-- Form Row 1 -->
               <div class="form-row">
-
                 <div class="col-md-6 mb-2">
                   <select name="raisedBy" class="form-control">
                     <option selected="true" disabled="disabled">Raised By</option>
@@ -60,7 +56,7 @@
                   </select>
                 </div>
 
-                <div class="col-md-6 mb-3">
+                <div class="col-md-4 mb-3">
                   <select name="system" class="form-control">
                     <option selected="true" disabled="disabled">System</option>
                     {% for system in systems %}
@@ -69,7 +65,7 @@
                   </select>
                 </div>
 
-                <div class="col-md-3 mb-3">
+                <div class="col-md-4 mb-3">
                   <select name="priority" class="form-control">
                     <option selected="true" disabled="disabled">Priority</option>
                     {% for key,value in priority_choices %}
@@ -78,7 +74,7 @@
                   </select>
                 </div>
 
-                <div class="col-md-3 mb-3">
+                <div class="col-md-4 mb-3">
                   <select name="status" class="form-control">
                     <option selected="true" disabled="disabled">Status</option>
                     {% for key,value in status_choices %}
@@ -86,8 +82,9 @@
                     {% endfor %}
                   </select>
                 </div>
-             
-              <button class="btn btn-secondary btn-block mt-4" type="submit">Search</button>
+
+                <button class="btn btn-secondary btn-block mt-4" type="submit">Search</button>
+              </div>
             </form>
           </div>
         </div>
@@ -95,105 +92,106 @@
     </div>
   </section>
 
+  <!-- Incidents -->
+  <section id="incidents" class="py-3">
+    <div class="container">
+      {% if incidents %}
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Incident</th>
+              <th>Title</th>
+              <th>Date Created</th>
+              <th>Date Resolved</th>
+              <th>Closed On</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Owned By</th>
+              <th>System ID</th>
+            </tr>
+            <!--alerts-->
+            {% include 'partials/_alerts.html' %}
+          </thead>
+          <tbody>
+            {% for incident in incidents %}
+              <tr>
+                <td>
+                  <a href="/incidents/{{ incident.id }}/">{{ incident.id }}</a>
+                </td>
+                <td>
+                  {{ incident.title }}
+                </td>
+                <td>
+                  {{ incident.createdOn|date:"d-m-Y H:i:s" }}
+                </td>
+                <td>
+                  {{ incident.resolvedOn|date:"d-m-Y H:i:s" }}
+                </td>
+                <td>
+                  {{ incident.closedOn|date:"d-m-Y H:i:s" }}
+                </td>
+                <td>
+                  {{ incident.get_priority_display }}
+                </td>
+                <td>
+                  {{ incident.get_status_display }}
+                </td>
+                <td>
+                  {{ incident.ownedBy }}
+                </td>
+                <td>
+                  {{ incident.system }}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="col-md-12">
+          <p>No Incidents Available</p>
+        </div>
+      {% endif %}
 
-<!-- Incidents -->
-<section id="incidents" class="py-3">
-  <div class="container">
-    <table class="table" method="GET">
-      <thead>
-        {% if incidents %}
-        <tr>
-          <th>Incident</th>
-          <th>Title</th>
-          <th>Date Created</th>
-          <th>Date Resolved</th>
-          <th>Closed On</th>
-          <th>Priority</th>
-          <th>Status</th>
-          <th>Owned By</th>
-          <th>System ID</th>
-        </tr>
-        <!--alerts-->
-        {% include 'partials/_alerts.html' %}
+      <input type="button" name="create" value="Create Incident" class="btn btn-secondary btn-block"
+             onclick="location.href='createincident'"/>
 
-        {% for incident in incidents %}
-        <tr>
-          <td>
-            <a href="/incidents/{{ incident.id }}/">{{ incident.id}}</a>
-          </td>
-          <td>
-            {{ incident.title }}</a>
-          </td>
-          <td>
-            {{ incident.createdOn }}</a>
-          </td>
-          <td>
-            {{ incident.resolvedOn }}</a>
-          </td>
-          <td>
-            {{ incident.closedOn }}</a>
-          </td>
-          <td>
-            {{ incident.get_priority_display }}</a>
-          </td>
-          <td>
-            {{ incident.get_status_display }}</a>
-          </td>
-          <td>
-            {{ incident.ownedBy }}</a>
-          </td>
-          <td>
-            {{ incident.system }}</a>
-          </td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <div class="col-md-12">
-      <p>No Incidents Available</p>
-    </div>
-    {% endif %}
-
-    <input type="button" name="create" value="Create Incident" class="btn btn-secondary btn-block" onclick="location.href='createincident'"/>
-
-    <div class="row">
-      <div class="col-md-12">
-        {% if incidents.has_other_pages %}
-          <ul class="pagination">
-            {% if incidents.has_previous %}
-              <li class="page-item">
-                <a href="?page={{incidents.previous_page_number}}" class="page-link">&laquo;</a>
-              </li>
-            {% else %}
-              <li class="page-item disabled">
-                <a class="page-link">&laquo;</a>
-              </li>
-            {% endif %}
-            {% for i in incidents.paginator.page_range %}
-              {% if incidents == i %}
-                <li class="page-item active">
-                  <a class="page-link">{{i}}</a>
+      <div class="row">
+        <div class="col-md-12">
+          {% if incidents.has_other_pages %}
+            <ul class="pagination">
+              {% if incidents.has_previous %}
+                <li class="page-item">
+                  <a href="?page={{ incidents.previous_page_number }}" class="page-link">&laquo;</a>
                 </li>
               {% else %}
-                <li class="page-item">
-                  <a href="?page={{i}}" class="page-link">{{i}}</a>
+                <li class="page-item disabled">
+                  <a class="page-link">&laquo;</a>
                 </li>
               {% endif %}
-            {% endfor %}
-            {% if incidents.has_next %}
-              <li class="page-item">
-                <a href="?page={{incidents.next_page_number}}" class="page-link">&raquo;</a>
-              </li>
-            {% else %}
-              <li class="page-item disabled">
-                <a class="page-link">&raquo;</a>
-              </li>
-            {% endif %}
-          </ul>
-        {% endif %}
+              {% for i in incidents.paginator.page_range %}
+                {% if incidents == i %}
+                  <li class="page-item active">
+                    <a class="page-link">{{ i }}</a>
+                  </li>
+                {% else %}
+                  <li class="page-item">
+                    <a href="?page={{ i }}" class="page-link">{{ i }}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+              {% if incidents.has_next %}
+                <li class="page-item">
+                  <a href="?page={{ incidents.next_page_number }}" class="page-link">&raquo;</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled">
+                  <a class="page-link">&raquo;</a>
+                </li>
+              {% endif %}
+            </ul>
+          {% endif %}
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 {% endblock %}

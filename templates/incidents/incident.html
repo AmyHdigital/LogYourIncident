@@ -13,6 +13,7 @@
         </div>
     </section>
 
+<<<<<<< HEAD
     <!-- Breadcrumb -->
     <section id="bc" class="mt-3">
         <div class="container">
@@ -25,6 +26,62 @@
                     <li class="breadcrumb-item active"> {{incident.id}}</li>
                 </ol>
             </nav>
+=======
+  <!-- Breadcrumb -->
+  <section id="bc" class="mt-3">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="/incidents/">
+              <i class="fas fa-home"></i> All Incidents</a>
+          </li>
+          <li class="breadcrumb-item active"> {{ incident.id }}</li>
+        </ol>
+      </nav>
+    </div>
+  </section>
+
+
+  <section id="incident" class="py-4">
+    <div class="container">
+      <div class="row mb-5 fields">
+        <div class="col-md-6">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item text-secondary">
+              <i class=""></i> Title of Incident
+              <span class="float-right">{{ incident.title }}</span>
+            </li>
+            <li class="list-group-item text-secondary">
+              <i class=""></i> Date Incident Created:
+              <span class="float-right">{{ incident.createdOn }}</span>
+            </li>
+            <li class="list-group-item text-secondary">
+              <i class=""></i> Priority of Incident:
+              <span class="float-right">{{ incident.get_priority_display }}</span>
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item text-secondary">
+              <i class=""></i> Status of Incident:
+              <span class="float-right">{{ incident.get_status_display }}</span>
+            </li>
+            <li class="list-group-item text-secondary">
+              <i class=""></i> System affected:
+              <span class="float-right">{{ incident.system }}</span>
+            </li>
+            <li class="list-group-item text-secondary">
+              <i class=""></i> Incident Owned By:
+              <span class="float-right">{{ incident.ownedBy }}</span>
+            </li>
+            <li class="list-group-item text-secondary">
+              <i class=""></i> Incident Raised by:
+              <span class="float-right">{{ incident.reportedBy }} </span>
+            </li>
+          </ul>
+>>>>>>> a09fc8d (amend accounts html screen)
         </div>
     </section>
     

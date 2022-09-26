@@ -28,7 +28,7 @@ def register(request):
                     # Looks good
                     user = User.objects.create_user(username=username, password=password, first_name=first_name, last_name=last_name, email=email)
                     user.save()
-                    messages.success(request, 'You are now logged in')
+                    messages.success(request, 'You are now registed, please log in')
                     return redirect('login')
                   
         else:

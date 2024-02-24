@@ -80,7 +80,7 @@
       </div>
     </div>
   </section>
-
+ 
   <section>
     <div class="container">
       <!-- show assign button if
@@ -127,7 +127,7 @@
       <!-- show delete button if
          (a) user is Admin
      -->
-
+     
       {% if user.is_staff == True %}
         <input type="button" name="delete" value="Delete" class="btn btn-secondary btn-block"
                onclick="location.href='updateincident/?button=delete'"/>
@@ -159,6 +159,7 @@
               {% endfor %}
             </thead>
           </table>
+         
         {% else %}
           <div class="col-md-12">
             <p>No Comments Available</p>
@@ -174,4 +175,6 @@
       </div>
     </div>
   </section>
+
+ 
 {% endblock %}

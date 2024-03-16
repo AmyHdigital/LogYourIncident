@@ -93,20 +93,22 @@ def update_incident(request, incident_id):
         messages.success(request, 'Incident Resolved')
         this_incident.save()
     elif request.method == 'POST' and 'unassign' in request.POST:
-        this_incident.status = Status.RAISED
-        this_incident.ownedBy = None
-        messages.success(request, 'Incident unassigned')
-        this_incident.save()
+        unassignIncident(request,this_incident)
+        # this_incident.status = Status.RAISED
+        # this_incident.ownedBy = None
+        # messages.success(request, 'Incident unassigned')
+        # this_incident.save()
     elif request.method == 'POST' and 'assign' in request.POST:
         assignIncident(request, this_incident)
         # this_incident.status = Status.IN_PROGRESS
         # this_incident.ownedBy = request.user
         # this_incident.save()
     elif request.method == 'POST' and 'close' in request.POST:
-        this_incident.status = Status.CLOSED
-        this_incident.closedOn = timezone.now()
-        messages.success(request, 'Incident Closed')
-        this_incident.save()
+        closeIncident(request,this_incident)
+        # this_incident.status = Status.CLOSED
+        # this_incident.closedOn = timezone.now()
+        # messages.success(request, 'Incident Closed')
+        # this_incident.save()
     elif request.method == 'POST' and 'delete' in request.POST:
         # IncidentComment.objects.filter(incidentId=incident_id).delete()
         # this_incident.delete()
@@ -150,6 +152,31 @@ def assignIncident(request, incident):
             messages.warning(request, 'You cannot assign an incident raised by you')
     else:
         messages.warning(request, 'Incident already assigned')
+
+def closeIncident(request, incident):
+    if request.user.is_staff and incident.status == 'RE':
+        incident.status = Status.CLOSED
+        incident.closedOn = timezone.now()
+        messages.success(request, 'Incident Closed')
+        incident.save()
+    else:
+        messages.warning(request, 'Incident can only be closed by Admin')
+
+def unassignIncident(request, incident):
+    if request.user.is_staff:
+        if incident.status == 'IP':
+            if incident.ownedBy is not None:
+                incident.status = Status.RAISED
+                incident.ownedBy = None
+                messages.success(request, 'Incident unassigned successfully')
+                incident.save()
+            else:
+                messages.warning(request, 'This incident is already unassigned')
+        else:
+            messages.warning(request, 'This incident is not in-progress')
+    else:
+        messages.warning(request, 'Incident can only be unassigned by Admin')
+
 
 
 def search(request):

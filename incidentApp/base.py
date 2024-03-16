@@ -34,6 +34,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'myincidentapp.herokuapp.com']
 
+SESSION_COOKIE_HTTPONLY = False
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -47,11 +49,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_filters',
     'django.contrib.humanize',
-    'django_extensions'
+    'django_extensions',
+    'django_advanced_password_validation'    
+    
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -88,14 +91,38 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
+ 
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
+       
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 12,
+        }
+    },
+    
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+       {
+        'NAME': 'django_advanced_password_validation.advanced_password_validation.ContainsLowercaseValidator',
+        'OPTIONS': {
+            'min_lowercase': 1
+        }
+    },
+    {
+        'NAME': 'django_advanced_password_validation.advanced_password_validation.ContainsUppercaseValidator',
+        'OPTIONS': {
+            'min_uppercase': 1
+        }
+    },
+    {
+        'NAME': 'django_advanced_password_validation.advanced_password_validation.ContainsSpecialCharactersValidator',
+        'OPTIONS': {
+            'min_characters': 1
+        }
     },
 ]
 

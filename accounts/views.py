@@ -2,6 +2,8 @@ import re
 from django.shortcuts import render, redirect
 from django.contrib import messages, auth
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 
 def register(request):
@@ -13,6 +15,7 @@ def register(request):
         email = request.POST['email']
         password = request.POST['password']
         password2 = request.POST['password2']
+        
 
         # check if passwords match
         if password == password2:
@@ -25,17 +28,30 @@ def register(request):
                     messages.error(request, 'That email is being used')
                     return redirect('register')
                 else:
-                    # Looks good
-                    user = User.objects.create_user(username=username, password=password, first_name=first_name, last_name=last_name, email=email)
-                    user.save()
-                    messages.success(request, 'You are now registed, please log in')
-                    return redirect('login')
+                      # Looks good
+                    try:
+                      validate_password(password=password, user=username);
+                    except ValidationError as error:
+                      message = "";
+                      for item in error:
+                        message = message + "* " + item + "<br/>"
+
+                      messages.error(request, message)
                   
+                      return redirect('register')
+                    else:
+                      user = User.objects.create_user(username=username, password=password, first_name=first_name, last_name=last_name, email=email)
+                      user.save()
+                      messages.success(request, 'You are now registered, please log in')
+                      return redirect('login')
         else:
           messages.error(request, 'Passwords do not match')
           return redirect('register')
     else:
       return render(request, 'accounts/register.html')
+
+
+      
 
 
 def login(request):

@@ -3,53 +3,82 @@
 {% block title %} | Register Account {% endblock %}
 
 {% block content %}
-<section id="register" class="bg-light py-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6 mx-auto">
-          <div class="card">
-            <div class="card-header bg-primary text-white">
-              <h4>
-                <i class="fas fa-user-plus"></i> Register</h4>
-            </div>
-            <div class="card-body">
-        
-              <form action="{% url 'register' %}" method="POST">
-                  {% csrf_token %}
-                  <div class="form-group">
-                      <label for="first_name">First Name</label>
-                      <input type="text" name="first_name" class="form-control" required>
+    <section id="register" class="bg-light py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mx-auto">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h4>
+                                <i class="fas fa-user-plus"></i> Register</h4>
+                        </div>
+                        <div class="card-body">
+
+                            <form action="{% url 'register' %}" method="POST">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="first_name">First Name</label>
+                                    <input type="text" name="first_name" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="last_name">Last Name</label>
+                                    <input type="text" name="last_name" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="username">Username</label>
+                                    <input type="text" name="username" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" name="email" class="form-control" required>
+                                    {{ form.errors }}
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="password2">Password</label>
+                                    <input type="password" name="password" class="form-control" required>
+                                    <div>
+                                        • Must contain 1 numeric character.
+                                    </div>
+                                    <div>
+                                        • Must contain 1 uppercase character.
+                                    </div>
+                                    <div>
+                                        • Must contain 1 lowercase character.
+                                    </div>
+                                    <div>
+                                        • Must contain 1 special character.
+                                        <div>
+                                        </div>
+                                        • Must not be similar to user attributes.
+                                        <div>
+                                        </div>
+                                        • Must be a minimum length of 12 characters.
+                                        <div>
+                                        </div>
+                                        • Must not be a common passphrase.
+                                        <div>
+                                        </div>
+                                        • Must not be entirely numeric.
+                                        <div>
+                                        </div>
+
+                                         </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="password">Confirm Password</label>
+                                        <input type="password" name="password2" class="form-control" required>
+                                    </div>
+                                    <input type="submit" value="Register" class="btn btn-secondary btn-block">
+                                    <!-- Alerts -->
+                                    {% include 'partials/_alerts.html' %}
+
+                            </form>
+                        </div>
                     </div>
-                    <div class="form-group">
-                      <label for="last_name">Last Name</label>
-                      <input type="text" name="last_name" class="form-control" required>
-                    </div>
-                <div class="form-group">
-                  <label for="username">Username</label>
-                  <input type="text" name="username" class="form-control" required>
                 </div>
-                <div class="form-group">
-                  <label for="email">Email</label>
-                  <input type="email" name="email" class="form-control" required>
-                  {{form.errors}}
-                </div>√
-                <div class="form-group">
-                  <label for="password2">Password</label>
-                  <input type="password" name="password" class="form-control" required>
-                </div>
-                <div class="form-group">
-                  <label for="password">Confirm Password</label>
-                  <input type="password" name="password2" class="form-control" required>
-                </div>
-                <input type="submit" value="Register" class="btn btn-secondary btn-block">
-                      <!-- Alerts -->
-              {% include 'partials/_alerts.html' %}
-       
-              </form>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </section>
-  {% endblock %}
+    </section>
+{% endblock %}

@@ -1,18 +1,15 @@
-from pickle import NONE
-from urllib import request
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, Http404
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.contrib import messages
-from accounts.views import login
-from .models import Incident, IncidentComment, System, Status, Priority
-from . import forms
-import incidents
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from incidents.choices import raisedBy_choices, priority_choices, ownedBy_choices, status_choices
+from django.core.paginator import Paginator
+from django.shortcuts import redirect
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
+
+from . import forms
+from .models import Incident, IncidentComment, System, Status, Priority
+
 
 
 # Create your views here.

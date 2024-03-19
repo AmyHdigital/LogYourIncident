@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 import os
+from datetime import datetime
+
 import dotenv
 from pathlib import Path
 from django.contrib.messages import constants as messages
@@ -50,8 +52,9 @@ INSTALLED_APPS = [
     'django_filters',
     'django.contrib.humanize',
     'django_extensions',
-    'django_advanced_password_validation'    
-    
+    'django_advanced_password_validation',
+    'axes'
+
 ]
 
 MIDDLEWARE = [
@@ -62,7 +65,43 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'axes.middleware.AxesMiddleware',
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+AXES_ENABLED = True
+AXES_LOCK_OUT_AT_FAILURE = True
+AXES_LOCKOUT_PARAMETERS = ["username"]
+AXES_ENABLE_ADMIN = True
+AXES_RESET_ON_SUCCESS = False
+AXES_ONLY_ADMIN_SITE = False
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': f'./logs/debug {datetime.now().strftime("%Y-%m-%d")}.log',
+
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ["file"],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    }
+}
 
 ROOT_URLCONF = 'incidentApp.urls'
 
@@ -91,22 +130,23 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
- 
+
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
-       
+
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
         'OPTIONS': {
             'min_length': 12,
         }
     },
-    
+
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
-       {
+
+    {
         'NAME': 'django_advanced_password_validation.advanced_password_validation.ContainsLowercaseValidator',
         'OPTIONS': {
             'min_lowercase': 1
@@ -124,6 +164,12 @@ AUTH_PASSWORD_VALIDATORS = [
             'min_characters': 1
         }
     },
+    {
+        'NAME': 'django_advanced_password_validation.advanced_password_validation.ContainsDigitsValidator',
+        'OPTIONS': {
+            'min_digits': 1
+        }
+    }
 ]
 
 # Internationalization

@@ -4,6 +4,7 @@ autopep8==1.7.0
 dill==0.3.5.1
 dj-database-url==1.0.0
 django==4.2.10
+django-axes==6.4.0
 django-extensions==3.2.3
 django-filter==22.1
 django-test==0.4030

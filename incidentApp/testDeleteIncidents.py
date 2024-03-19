@@ -2,8 +2,10 @@ from django.test import TestCase
 from django.test import Client
 from django.contrib.auth.models import User
 from incidents.models import Incident, System, Status, Priority
+from django.test import TestCase, override_settings
 
 
+@override_settings(AXES_ENABLED=False)
 class TestDeleteIncidents(TestCase):
 
     def testDeleteIncidentWithNonAdminUser(self):
@@ -48,7 +50,6 @@ class TestDeleteIncidents(TestCase):
         self.assertEquals(str(messages[0]), "Only admin users can delete incidents.")
         self.assertTrue(Incident.objects.filter(id=incident.id).exists())
 
-
     def testDeleteIncidentWithAdminUser(self):
         client = Client()
 
@@ -61,7 +62,7 @@ class TestDeleteIncidents(TestCase):
             is_staff=True
         )
 
-        client.login(username='admin', password='')
+        client.login(username='admin', password='admin')
 
         # Capture number of incidents at the start of the test
         numberOfIncidents = Incident.objects.count();
@@ -90,7 +91,6 @@ class TestDeleteIncidents(TestCase):
         self.assertEquals(Incident.objects.count(), numberOfIncidents + 1)
         self.assertEquals(str(messages[0]), "Only admin users can delete incidents.")
         self.assertTrue(Incident.objects.filter(id=incident.id).exists())
-
 
     def testAssignIncidentWithNotRaisedByCurrentUser(self):
         client = Client()

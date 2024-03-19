@@ -2,12 +2,14 @@ from django.test import TestCase
 from django.test import Client
 from django.contrib.auth.models import User
 from incidents.models import Incident, System, Status, Priority
+from django.test import TestCase, override_settings
 
 
+@override_settings(AXES_ENABLED=False)
 class TestAddComment(TestCase):
 
     def TestAddBlankComment(self):
-    client = Client()
+        client = Client()
 
     user = User.objects.create_user(
         username='harry',

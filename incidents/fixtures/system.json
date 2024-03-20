@@ -11,7 +11,7 @@
     "model": "incidents.system",
     "pk": 2,
     "fields": {
-      "name": "SyetemTwo",
+      "name": "SystemTwo",
       "description": "Description of SystemTwo"
     }
   },

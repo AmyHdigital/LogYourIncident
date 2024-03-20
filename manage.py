@@ -4,6 +4,7 @@ import os
 import sys
 from dotenv import load_dotenv
 
+
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'incidentApp.settings')
@@ -16,6 +17,7 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
+
 
 load_dotenv()  # take environment variables from .env.
 if __name__ == '__main__':

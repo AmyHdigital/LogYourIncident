@@ -73,7 +73,7 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-AXES_ENABLED = True
+AXES_ENABLED = False
 AXES_LOCK_OUT_AT_FAILURE = True
 AXES_LOCKOUT_PARAMETERS = ["username"]
 AXES_ENABLE_ADMIN = True

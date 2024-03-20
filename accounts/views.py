@@ -2,6 +2,8 @@ import re
 from django.shortcuts import render, redirect
 from django.contrib import messages, auth
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 
 def register(request):
@@ -26,41 +28,57 @@ def register(request):
                     return redirect('register')
                 else:
                     # Looks good
-                    user = User.objects.create_user(username=username, password=password, first_name=first_name, last_name=last_name, email=email)
-                    user.save()
-                    messages.success(request, 'You are now registed, please log in')
-                    return redirect('login')
-                  
+                    try:
+                        validate_password(password=password, user=username);
+                    except ValidationError as error:
+                        message = "";
+                        for item in error:
+                            message = message + "* " + item + "<br/>"
+
+                        messages.error(request, message)
+
+                        return redirect('register')
+                    else:
+                        user = User.objects.create_user(username=username, password=password, first_name=first_name,
+                                                        last_name=last_name, email=email)
+                        user.save()
+                        messages.success(request, 'You are now registered, please log in')
+                        return redirect('login')
         else:
-          messages.error(request, 'Passwords do not match')
-          return redirect('register')
+            messages.error(request, 'Passwords do not match')
+            return redirect('register')
     else:
-      return render(request, 'accounts/register.html')
+        return render(request, 'accounts/register.html')
 
 
 def login(request):
     if request.method == 'POST':
-      username = request.POST['username']
-      password = request.POST['password']
+        username = request.POST['username']
+        password = request.POST['password']
 
-      user = auth.authenticate(username=username, password=password)
+        try:
+            user = auth.authenticate(request, username=username, password=password)
+        except ValidationError as error:
+            messages.error(request, error.message)
+            return redirect('login')
 
-      if user is not None:
-        auth.login(request, user)
-        messages.success(request, 'You are now logged in')
-        return redirect('dashboard')
-      else: 
-        messages.error(request, 'Invalid credentials')
-        return redirect('login')
-    else: 
-      return render(request, 'accounts/login.html')
+        else:
+            if user is not None:
+                auth.login(request, user)
+                messages.success(request, 'You are now logged in')
+                return redirect('dashboard')
+            else:
+                messages.error(request, 'Invalid credentials')
+                return redirect('login')
+    else:
+        return render(request, 'accounts/login.html')
 
 
 def logout(request):
     if request.method == 'POST':
-      auth.logout(request)
-      messages.success(request,'You are now logged out')
-      return redirect('incidents')
+        auth.logout(request)
+        messages.success(request, 'You are now logged out')
+        return redirect('incidents')
 
 
 def dashboard(request):

@@ -1,18 +1,16 @@
-from pickle import NONE
-from urllib import request
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, Http404
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.contrib import messages
-from accounts.views import login
-from .models import Incident, IncidentComment, System, Status, Priority
-from . import forms
-import incidents
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from incidents.choices import raisedBy_choices, priority_choices, ownedBy_choices, status_choices
+from django.core.paginator import Paginator
+from django.shortcuts import redirect
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
+
+from . import forms
+from .models import Incident, IncidentComment, System, Status, Priority
+
+
 
 # Create your views here.
 
@@ -29,7 +27,7 @@ def incidents(request):
         ownedBy = request.GET['ownedBy']
         if ownedBy:
             queryset_list = queryset_list.filter(ownedBy__exact=ownedBy)
-   
+
     if 'priority' in request.GET:
         priority = request.GET['priority']
         if priority:
@@ -50,14 +48,14 @@ def incidents(request):
     page = request.GET.get('page')
     paged_incidents = paginator.get_page(page)
 
-    #myFilters = IncidentFilter (request.GET, queryset=Incident.objects.all())
+    # myFilters = IncidentFilter (request.GET, queryset=Incident.objects.all())
     context = {
         'users': User.objects.all(),
         'priority_choices': Priority.choices,
         'status_choices': Status.choices,
         'systems': System.objects.all(),
-        'incidents' : paged_incidents
-        
+        'incidents': paged_incidents
+
     }
 
     return render(request, 'incidents/incidents.html', context)
@@ -86,39 +84,96 @@ def createIncident(request):
 def update_incident(request, incident_id):
     this_incident = get_object_or_404(Incident, pk=incident_id)
 
-    if request.GET.get('button') == 'resolve':
+    if request.method == 'POST' and 'resolve' in request.POST:
         this_incident.status = Status.RESOLVED
         this_incident.resolvedOn = timezone.now()
-        messages.success(request,'Incident Resolved')
-    elif request.GET.get('button') == 'unassign':
-        this_incident.status = Status.RAISED
-        this_incident.ownedBy = None
-        messages.success(request,'Incident unassigned')
-    elif request.GET.get('button') == 'assign':
-        this_incident.status = Status.IN_PROGRESS
-        this_incident.ownedBy = request.user
-    elif request.GET.get('button') == 'close':
-        this_incident.status = Status.CLOSED
-        this_incident.closedOn = timezone.now()
-        messages.success(request,'Incident Closed')
-    elif request.GET.get('button') == 'delete':
-        IncidentComment.objects.filter(incidentId=incident_id).delete()
-        this_incident.delete()
-        messages.success(request,'Incident Deleted')
-    elif request.GET['addcomment'] and request.GET['comment']:
+        messages.success(request, 'Incident Resolved')
+        this_incident.save()
+    elif request.method == 'POST' and 'unassign' in request.POST:
+        unassignIncident(request,this_incident)
+        # this_incident.status = Status.RAISED
+        # this_incident.ownedBy = None
+        # messages.success(request, 'Incident unassigned')
+        # this_incident.save()
+    elif request.method == 'POST' and 'assign' in request.POST:
+        assignIncident(request, this_incident)
+        # this_incident.status = Status.IN_PROGRESS
+        # this_incident.ownedBy = request.user
+        # this_incident.save()
+    elif request.method == 'POST' and 'close' in request.POST:
+        closeIncident(request,this_incident)
+        # this_incident.status = Status.CLOSED
+        # this_incident.closedOn = timezone.now()
+        # messages.success(request, 'Incident Closed')
+        # this_incident.save()
+    elif request.method == 'POST' and 'delete' in request.POST:
+        # IncidentComment.objects.filter(incidentId=incident_id).delete()
+        # this_incident.delete()
+        # messages.success(request,'Incident Deleted')
+        deleteIncident(request, this_incident)
+    elif request.method == 'POST' and request.POST['comment'] and 'addcomment' in request.POST:
         createComment = IncidentComment.objects.create(
-            incidentId = this_incident,
-            userId = request.user,
-            commentTime = timezone.now(),
-            comment = request.GET['comment']).save()
-        messages.success(request,'Comment saved')
-    elif request.GET['addcomment'] and  not request.GET['comment']:
-        messages.error(request,'Comment is empty and has not been saved')
+            incidentId=this_incident,
+            userId=request.user,
+            commentTime=timezone.now(),
+            comment=request.POST['comment']).save()
+        messages.success(request, 'Comment saved')
+        this_incident.save()
+    elif request.method == 'POST' and not request.POST['comment'] and 'addcomment' in request.POST:
+        messages.error(request, 'Comment is empty and has not been saved')
         return redirect('/incidents/' + str(incident_id))
 
-    this_incident.save()
-
     return redirect('/incidents/')
+
+
+def deleteIncident(request, incident):
+    if request.user.is_staff:
+        IncidentComment.objects.filter(incidentId=incident.id).delete()
+        incident.delete()
+        messages.success(request, 'Incident Deleted')
+    else:
+        messages.warning(request, 'Only admin users can delete incidents.')
+
+
+def assignIncident(request, incident):
+    if incident.ownedBy == None:
+        if request.user.id != incident.reportedBy.id:
+            if incident.status == 'RA':
+                incident.status = Status.IN_PROGRESS
+                incident.ownedBy = request.user
+                incident.save()
+                messages.success(request, 'Incident assigned successfully')
+            else:
+                messages.warning(request, 'Incidents can only be assigned if the status is Raised')
+        else:
+            messages.warning(request, 'You cannot assign an incident raised by you')
+    else:
+        messages.warning(request, 'Incident already assigned')
+
+def closeIncident(request, incident):
+    if request.user.is_staff and incident.status == 'RE':
+        incident.status = Status.CLOSED
+        incident.closedOn = timezone.now()
+        messages.success(request, 'Incident Closed')
+        incident.save()
+    else:
+        messages.warning(request, 'Incident can only be closed by Admin')
+
+def unassignIncident(request, incident):
+    if request.user.is_staff:
+        if incident.status == 'IP':
+            if incident.ownedBy is not None:
+                incident.status = Status.RAISED
+                incident.ownedBy = None
+                messages.success(request, 'Incident unassigned successfully')
+                incident.save()
+            else:
+                messages.warning(request, 'This incident is already unassigned')
+        else:
+            messages.warning(request, 'This incident is not in-progress')
+    else:
+        messages.warning(request, 'Incident can only be unassigned by Admin')
+
 
 
 def search(request):
@@ -133,7 +188,7 @@ def search(request):
         ownedBy = request.GET['ownedBy']
         if ownedBy:
             queryset_list = queryset_list.filter(ownedBy__exact=ownedBy)
-   
+
     if 'priority' in request.GET:
         priority = request.GET['priority']
         if priority:
@@ -149,11 +204,9 @@ def search(request):
         if system:
             queryset_list = queryset_list.filter(system__exact=system)
 
-
     paginator = Paginator(queryset_list, 5)
     page = request.GET.get('page')
     paged_incidents = paginator.get_page(page)
-
 
     context = {
 
@@ -161,9 +214,9 @@ def search(request):
         'priority_choices': Priority.choices,
         'status_choices': Status.choices,
         'systems': System.objects.all(),
-        'incidents' : paged_incidents
+        'incidents': paged_incidents
     }
-    
+
     return render(request, 'incidents/incidents.html', context)
 
 

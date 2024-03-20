@@ -16,7 +16,7 @@
               {% include 'partials/_alerts.html' %}
               <form action="{% url 'createIncident' %}" method="POST">
                 {{  form.as_p }}
-                  <!-- {% csrf_token %} -->
+                {% csrf_token %}
                 <input type="submit" value="Save" class="btn btn-secondary btn-block">
               </form>
             </div>

@@ -89,8 +89,14 @@
           (c) status is RAISED
       -->
       {% if incident.ownedBy == None and incident.reportedBy != user and incident.status == 'RA' %}
-        <input type="button" name="assign" value="Assign To Me" class="btn btn-secondary btn-block"
-               onclick="location.href='updateincident/?button=assign'">
+        <form method="POST" action="{% url 'updateIncident' incident.id %}">
+          {% csrf_token %}
+          <p></p>
+          <button type="submit" name="assign" class="btn btn-secondary btn-block">Assign</button>
+        </form>
+
+        <!-- <input type="button" name="assign" value="Assign To Me" class="btn btn-secondary btn-block"
+               onclick="location.href='updateincident/?button=assign'"> -->
 
         <!-- show unassign button if
         (a) incident is  owned by someone AND
@@ -98,8 +104,15 @@
         (c) incident status is in-progress
     -->
       {% elif incident.ownedBy != null and user.is_staff == True and incident.status == 'IP' %}
-        <input type="button" name="unassign" value="Unassign" class="btn btn-secondary btn-block"
-               onclick="location.href='updateincident/?button=unassign'">
+        <form method="POST" action="{% url 'updateIncident' incident.id %}">
+          {% csrf_token %}
+          <p></p>
+          <button type="submit" name="unassign" class="btn btn-secondary btn-block">Unassign</button>
+        </form>
+
+
+        <!-- <input type="button" name="unassign" value="Unassign" class="btn btn-secondary btn-block"
+               onclick="location.href='updateincident/?button=unassign'"> -->
       {% endif %}
 
       <!-- show close button if
@@ -107,8 +120,14 @@
           (b) status is resolved
       -->
       {% if user.is_staff == True and incident.status == 'RE' %}
-        <input type="button" name="close" value="Close" class="btn btn-secondary btn-block"
-               onclick="location.href='updateincident/?button=close'">
+        <form method="POST" action="{% url 'updateIncident' incident.id %}">
+          {% csrf_token %}
+          <p></p>
+          <button type="submit" name="close" class="btn btn-secondary btn-block">Close</button>
+        </form>
+
+        <!-- <input type="button" name="close" value="Close" class="btn btn-secondary btn-block"
+               onclick="location.href='updateincident/?button=close'"> -->
       {% endif %}
 
       <!-- show resolvebutton if
@@ -119,8 +138,13 @@
   -->
       {% if incident.status != 'RE' %}
         {% if incident.reportedBy == user or user.is_staff == True or incident.ownedBy == user %}
-          <input type="button" name="resolve" value="Resolve" class="btn btn-secondary btn-block"
-                 onclick="location.href='updateincident/?button=resolve'"/>
+          <form method='POST' action="{% url 'updateIncident' incident.id %}">
+          <!-- <input type="button" name="resolve" value="Resolve" class="btn btn-secondary btn-block"
+                 onclick="location.href='updateincident/?button=resolve'"/> -->
+            {% csrf_token %}
+            <p></p>
+            <button type=submit name="resolve" class="btn btn-secondary btn-block">Resolve</button>
+          </form>
         {% endif %}
       {% endif %}
 
@@ -129,8 +153,12 @@
      -->
      
       {% if user.is_staff == True %}
-        <input type="button" name="delete" value="Delete" class="btn btn-secondary btn-block"
-               onclick="location.href='updateincident/?button=delete'"/>
+        <form method='POST' action="{% url 'updateIncident' incident.id %}">
+          {{  form.as_p }}
+          {% csrf_token %}
+          <p></p>
+          <button type=submit name="delete" class="btn btn-secondary btn-block">Delete</button>
+        </form>
       {% endif %}
 
       <div class="form-group">
@@ -165,13 +193,21 @@
             <p>No Comments Available</p>
           </div>
         {% endif %}
-        <form action="updateincident/?button=addcomment">
+        <form method="POST" action="{% url 'updateIncident' incident.id %}">
+          {% csrf_token %}
+          <label for="message" class="col-form-label">Message</label>
+          <textarea name="comment" class="form-control"></textarea>
+          <p></p>
+          <button type="submit" name="addcomment" class="btn btn-secondary btn-block">Add Comment</button>
+        </form>
+
+        <!-- <form action="updateincident/?button=addcomment">
           <label for="message" class="col-form-label">Message</label>
           <textarea name="comment" class="form-control"></textarea>
           <p></p>
           <input type="submit" name="addcomment" value="Add Comment" class="btn btn-secondary btn-block"/>
         </form>
-        <p></p>
+        <p></p> -->
       </div>
     </div>
   </section>

@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 import os
-import django_on_heroku
 import dotenv
 from pathlib import Path
 from django.contrib.messages import constants as messages
@@ -48,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_filters',
     'django.contrib.humanize',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
@@ -130,5 +130,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MESSAGE_TAGS = {
     messages.ERROR: 'danger'
 }
-
-django_on_heroku.settings(locals())

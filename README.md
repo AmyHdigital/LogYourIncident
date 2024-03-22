@@ -1,47 +1,52 @@
 # Log Your Incidents
 
-## Usage
-This project is designed to be deployed to Heroku with a
-PostgreSQL database.  However, it also contains a local
-settings file that allows it to work with a SQLLite 
-database.
+## How to Run the Application Locally
+The code can be accessed through from the website GitHub:
+https://github.com/AmyHdigital/LogYourIncident
 
-To create the database tables (for PostgreSQL):
+It is assumed that Python 3.9+ is installed on the target machine.
+1. Create the virtual environment – in this case I have called it env:
 
-```
-python manage.py migrate
-```
+`python3 -m venv env` 
 
-For local running (SQLLite):
-```
-python manage.py migrate --settings=incidentApp.local_settings 
-```
+2. Activate the virtual environment:
 
-You then need to create the admin (superuser):
-```
-python manage.py createsuperuser
-```
+`source env/bin/activate`
 
-Or, if running locally using SQLLite:
-```
-python manage.py createsuperuser --settings=incidentApp.local_settings 
-```
+3. Install the dependencies in the requirements.txt:
 
-Once the database tables have been created, start the
-server with (for PostgreSQL:
+`python3 -m pip install -r requirements.txt`
 
-```
-python manage.py runserver
-```
+4. Export the secret key:
 
-or (for SQLLite)
+`export SECRET_KEY=abcdefg (can be anything!) `
 
-```
-python manage.py runserver --settings=incidentApp.local_settings   
-```
+5. Create the database tables: 
 
-Admin pages can be access via the special URL:
+`python manage.py migrate `
 
-https://(hostname)/admin
+6. Create the super user with email and password:
 
-and then logging in as the admin/superuser
+`python manage.py createsuperuser` 
+
+7. Populate the base data:
+
+`python manage.py loaddata system.json`
+
+8. Run the server:
+
+`python manage.py runserver`
+
+
+
+
+
+
+
+
+
+
+
+
+
+

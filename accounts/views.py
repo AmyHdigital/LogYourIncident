@@ -1,9 +1,12 @@
+import logging
 import re
 from django.shortcuts import render, redirect
 from django.contrib import messages, auth
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+
+logger = logging.getLogger(__name__)
 
 
 def register(request):
@@ -53,21 +56,25 @@ def register(request):
 
 def login(request):
     if request.method == 'POST':
+        logger.debug("Accounts/login method has been called.")
         username = request.POST['username']
         password = request.POST['password']
 
         try:
             user = auth.authenticate(request, username=username, password=password)
         except ValidationError as error:
+            logger.warning(error.message)
             messages.error(request, error.message)
             return redirect('login')
 
         else:
             if user is not None:
                 auth.login(request, user)
+                logger.info(username + " has successfully logged in.")
                 messages.success(request, 'You are now logged in')
                 return redirect('dashboard')
             else:
+                logger.warning("*** Login attempted with invalid credentials.")
                 messages.error(request, 'Invalid credentials')
                 return redirect('login')
     else:

@@ -83,21 +83,34 @@ AXES_ONLY_ADMIN_SITE = False
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
         },
         'file': {
-            'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': f'./logs/debug {datetime.now().strftime("%Y-%m-%d")}.log',
-
+            'formatter': 'verbose'
         },
+    },
+    "root": {
+        "handlers": ["file", "console"],
+        "level": "INFO",
     },
     'loggers': {
         'django': {
-            'handlers': ["file"],
-            'level': 'INFO',
+            'handlers': ["file", "console"],
             'propagate': True,
         },
     }

@@ -1,7 +1,7 @@
 {% load static %}
-{% autoescape off %}
-<!DOCTYPE html>
 
+<!DOCTYPE html>
+{% autoescape off %}
 <html lang="en">
 
 <head>
@@ -21,17 +21,16 @@
 </head>
 
 <body>
-
   <!-- NavBar -->
-  
+
   {% include 'partials/_navbar.html' %}
     <!-- Main Content -->
   {% block content %} {% endblock %}
   <!-- Footer -->
   {% include 'partials/_footer.html' %}
-  
 
 </body>
 
-</html>
 {% endautoescape %}
+</html>
+
